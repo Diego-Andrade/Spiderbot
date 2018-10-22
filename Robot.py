@@ -8,14 +8,13 @@ from VEXMotorController29 import VEXMotorController29
 
 
 # Wiring mapping
-motor1Port = 16
-motor2Port = 20
+motorRightPort1 = 16
+motorRightPort2 = 20
+
+motorLeftPort1 = 19
+motorLeftPort2 = 26
 
 class Robot:
-    # Defining objects
-    controller = None
-    motor1 = None
-    motor2 = None
     
     def __init__(self):
         # Set up controller
@@ -27,8 +26,11 @@ class Robot:
         self.controller.registerListner("RY", self, self.handleRY)
         
         # Set up motors
-        self.motor1 = VEXMotorController29(motor1Port)
-        self.motor2 = VEXMotorController29(motor2Port)
+        self.motorRight1 = VEXMotorController29(motorRightPort1)
+        self.motorRight2 = VEXMotorController29(motorRightPort2)
+        
+        self.motorLeft1 = VEXMotorController29(motorLeftPort1)
+        self.motorLeft2 = VEXMotorController29(motorLeftPort2)
 
 
     def loop(self):
@@ -44,10 +46,12 @@ class Robot:
         
     # Called when a new LY value is recieved
     def handleLY(self, value):
-        self.motor1.set(value * -1)
+        self.motorLeft1.set(value * -1)
+        self.motorLeft2.set(value * -1)
         
     def handleRY(self, value):
-        self.motor2.set(value * -1)
+        self.motorRight1.set(value * -1)
+        self.motorRight2.set(value * -1)
         
 
 # ********************** MAIN LOOP *********************
