@@ -48,7 +48,8 @@ class Robot:
     def handleLY(self, value):
         self.motorLeft1.set(value * -1)
         self.motorLeft2.set(value * -1)
-        
+     
+    # This gets called when right stick is moved on xbox controller
     def handleRY(self, value):
         self.motorRight1.set(value * -1)
         self.motorRight2.set(value * -1)
