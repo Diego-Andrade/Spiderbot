@@ -4,10 +4,14 @@
 #        Pwm frequency of 50 hz with duty cycle being calculated to give
 #        1ms - 2ms pulses for motor controller 29
  
-import RPi.GPIO as GPIO
+import platform
+ 
+if (platform.system() == 'Windows'):
+     from DummyRPi import GPIO
+else:
+    import RPi.GPIO as GPIO
 
 class VEXMotorController29:
-    motor = None
     
     def __init__(self, port):
         GPIO.setmode(GPIO.BCM)
@@ -19,7 +23,7 @@ class VEXMotorController29:
     def set(self, value):
         if (value > 1.0 or value < -1.0):
             self.set(0)
-        
+            return
         # motor controller 29 requires 1ms - 2ms signal
         # 1.5 is off, so from center +- 0.5ms
         # 0.5 * percentage setting + off pos
