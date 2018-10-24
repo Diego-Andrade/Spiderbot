@@ -6,10 +6,6 @@ import RPi.GPIO as GPIO
 from XboxOneController import XboxOneController
 from VEXMotorController29 import VEXMotorController29
 
-#testing to see if I can make git commits
-print('jojo added this!')
-
-
 # Wiring mapping
 motorRightPort1 = 16
 motorRightPort2 = 20
