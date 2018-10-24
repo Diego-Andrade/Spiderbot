@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 from XboxOneController import XboxOneController
 from VEXMotorController29 import VEXMotorController29
 
+print('this is MY house')
 
 # Wiring mapping
 motorRightPort1 = 16
