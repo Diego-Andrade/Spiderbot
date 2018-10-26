@@ -2,6 +2,7 @@
 # Purpose: Handle event codes, register listeners, and trigger
 #          listners to new events recieved
 
+import sys
 from evdev import InputDevice, categorize, ecodes
 
 class XboxOneController:
@@ -36,20 +37,26 @@ class XboxOneController:
         "RX":    "ABS_RX",
         "RY":    "ABS_RY"
     }
-    
-    # Gamepad object to read events
-    gamepad = None
-    
-    # List of listners, populated once they register
-    listners = []
-    
-    # Deadzone defining
-    deadzoneAxis = 0.0
-    deadzoneTriggers = 0.0
-    
-    def __init__(self, deviceLocation):
-        self.gamepad = InputDevice(deviceLocation)
         
+    def __init__(self, deviceLocation, deadzoneAxis=0.0, deadzoneTriggers=0.0):
+        try:
+            # List of listners, populated once they register
+            self.listners = []
+
+            # For reconnecting later
+            self.deviceLocation = deviceLocation
+
+            # Deadzone defining
+            self.deadzoneAxis = deadzoneAxis
+            self.deadzoneTriggers = deadzoneTriggers
+
+            # The controller
+            self.gamepad = InputDevice(deviceLocation)
+            self.controllerConnected = True
+        except OSError:
+            print("Controller not found at location '{}'".format(deviceLocation))
+            print("Check if controller connected correct")
+            sys.exit()
     def registerListner(self, event, listner, callBack):
         if event in self.map:
             newListner = self.XboxEventListner(self.map[event], listner, callBack)
@@ -58,21 +65,33 @@ class XboxOneController:
             raise Exception('Event requested not supported', event)
         
     def handleEvent(self):
-        event = self.gamepad.read_one()
-        
-        if event == None:
-            return
-        
-        for listner in self.listners:
-            if event.type == ecodes.EV_KEY:
-                if listner.event == event.code:
-                    listner.callBack(event.value)
-            elif event.type == ecodes.EV_ABS:
-                absevent = categorize(event)
-                if listner.event == ecodes.bytype[absevent.event.type][absevent.event.code]:
-                    listner.callBack(self.scaleAxis(listner.event, absevent.event.value))
-                
-                
+        try:
+            # Handle reconnecting
+            if (not self.controllerConnected):
+                try:
+                    self.gamepad = InputDevice(self.deviceLocation)
+                    self.controllerConnected = True
+                    print("Controller reconnected!")
+                except OSError:
+                    return
+
+            # Get event, throws IOError if controller disconnected
+            event = self.gamepad.read_one()
+
+            if event == None:
+                return
+
+            for listner in self.listners:
+                if event.type == ecodes.EV_KEY:
+                    if listner.event == event.code:
+                        listner.callBack(event.value)
+                elif event.type == ecodes.EV_ABS:
+                    absevent = categorize(event)
+                    if listner.event == ecodes.bytype[absevent.event.type][absevent.event.code]:
+                        listner.callBack(self.scaleAxis(listner.event, absevent.event.value))
+        except IOError:
+            print("Cannot get event from controller. Was it disconnected?")
+            self.controllerConnected = False;
     def scaleAxis(self, axis, value):
         if axis == self.map["LT"] or axis == self.map["RT"]:
             # Range for LT and RT is 0 - 1023
