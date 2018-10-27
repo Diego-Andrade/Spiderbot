@@ -55,8 +55,9 @@ class XboxOneController:
             self.controllerConnected = True
         except OSError:
             print("Controller not found at location '{}'".format(deviceLocation))
-            print("Check if controller connected correct")
-            sys.exit()
+            print("Check if controller connected correctly")
+            self.controllerConnected = False;
+            #sys.exit()
     def registerListner(self, event, listner, callBack):
         if event in self.map:
             newListner = self.XboxEventListner(self.map[event], listner, callBack)
