@@ -7,11 +7,13 @@ from XboxOneController import XboxOneController
 from VEXMotorController29 import VEXMotorController29
 
 # Wiring mapping
-motorRightPort1 = 16
-motorRightPort2 = 20
+motorRightPort1 = 18
+motorRightPort2 = 19
 
-motorLeftPort1 = 19
-motorLeftPort2 = 26
+motorLeftPort1 = 17
+motorLeftPort2 = 16
+
+arm1 = 23
 
 class Robot:
     
@@ -24,12 +26,17 @@ class Robot:
         self.controller.registerListner("LY", self, self.handleLY)
         self.controller.registerListner("RY", self, self.handleRY)
         
-        # Set up motors
+        # Set up drive motors
         self.motorRight1 = VEXMotorController29(motorRightPort1)
         self.motorRight2 = VEXMotorController29(motorRightPort2)
         
         self.motorLeft1 = VEXMotorController29(motorLeftPort1)
         self.motorLeft2 = VEXMotorController29(motorLeftPort2)
+
+        # Set up arms
+        self.arm1 = VEXMotorController29(arm1)
+
+
 
 
     def loop(self):
@@ -41,7 +48,11 @@ class Robot:
 
     # Called when a new A value is recieved
     def handleA(self, value):
-        print("CallBack for A: ", value)
+        print("A pressed: {}".format(value))
+        if (value == 1):
+            self.arm1.set(1)
+        else:
+            self.arm1.set(-1)    
         
     # Called when a new LY value is recieved
     def handleLY(self, value):
