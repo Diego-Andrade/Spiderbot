@@ -116,11 +116,11 @@ class Robot:
         
     def handleRT(self, value):
         # Move arm1 up
-        self.arm1.set(value)
+        #self.arm1.set(value)
 
     def handleLT(self, value):
         # Multiply by -1 because LT moves arm1 down
-        self.arm1.set(value * -1)
+        #self.arm1.set(value * -1)
 
 # ********************** MAIN LOOP *********************
 
