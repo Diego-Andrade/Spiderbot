@@ -34,6 +34,13 @@ motorLeftPort1 = v7port3
 motorLeftPort2 = v7port4
 
 armLeft1 = v5port1
+armLeft2 = v5port2
+armLeft3 = v5port3
+armLeft4 = v5port4
+armRight1 = v5port5
+armRight2 = v5port6
+armRight3 = v5port7
+armRight4 = v5port8
 
 class Robot:
     
@@ -57,7 +64,17 @@ class Robot:
         self.motorRight2 = VEXMotorController29(motorRightPort2)
         self.motorLeft1 = VEXMotorController29(motorLeftPort1)
         self.motorLeft2 = VEXMotorController29(motorLeftPort2)
-        self.arm1 = VEXMotorController29(armLeft1, -1.0, 0.5)
+
+    # Set up arms
+        self.armLeft1 = VEXMotorController29(armLeft1, -1.0, 0.5)
+        self.armLeft2 = VEXMotorController29(armLeft2, -1.0, 0.5)
+        self.armLeft3 = VEXMotorController29(armLeft3, -1.0, 0.5)
+        self.armLeft4 = VEXMotorController29(armLeft4, -1.0, 0.5)
+        self.armRight1 = VEXMotorController29(armRight1, -1.0, 0.5)
+        self.armRight2 = VEXMotorController29(armRight2, -1.0, 0.5)
+        self.armRight3 = VEXMotorController29(armRight3, -1.0, 0.5)
+        self.armRight4 = VEXMotorController29(armRight4, -1.0, 0.5)
+
 
     def loop(self):
         self.controller.handleEvent()
@@ -69,9 +86,23 @@ class Robot:
     def handleA(self, value):\
         # Called when a new 'A' value is recieved
         if (value == 1):
-            self.arm1.set(1)
+            self.armLeft1.set(1)
+            self.armLeft2.set(1)
+            self.armLeft3.set(1)
+            self.armLeft4.set(1)
+            self.armRight1.set(1)
+            self.armRight2.set(1)
+            self.armRight3.set(1)
+            self.armRight4.set(1)
         else:
-            self.arm1.set(-1)    
+            self.armLeft1.set(-1)
+            self.armLeft2.set(-1)
+            self.armLeft3.set(-1)
+            self.armLeft4.set(-1)
+            self.armRight1.set(-1)
+            self.armRight2.set(-1)
+            self.armRight3.set(-1)
+            self.armRight4.set(-1)   
         
     def handleLY(self, value):
         # Called when a new LY value is recieved
