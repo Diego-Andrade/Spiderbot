@@ -7,13 +7,33 @@ from XboxOneController import XboxOneController
 from VEXMotorController29 import VEXMotorController29
 
 # Wiring mapping
-motorRightPort1 = 18
-motorRightPort2 = 19
 
-motorLeftPort1 = 17
-motorLeftPort2 = 16
+# Breakout layout
+v7port1 = 2
+v7port2 = 3
+v7port3 = 4
+v7port4 = 14
+v7port5 = 19
+v7port6 = 16
+v7port7 = 20
+v7port8 = 26
 
-arm1 = 23
+v5port1 = 15 
+v5port2 = 18
+v5port3 = 23
+v5port4 = 24
+v5port5 = 25
+v5port6 = 8
+v5port7 = 7
+v5port8 = 12
+
+motorRightPort1 = v7port1
+motorRightPort2 = v7port2
+
+motorLeftPort1 = v7port3
+motorLeftPort2 = v7port4
+
+armLeft1 = v5port1
 
 class Robot:
     
@@ -37,7 +57,7 @@ class Robot:
         self.motorRight2 = VEXMotorController29(motorRightPort2)
         self.motorLeft1 = VEXMotorController29(motorLeftPort1)
         self.motorLeft2 = VEXMotorController29(motorLeftPort2)
-        self.arm1 = VEXMotorController29(arm1, -1.0, 0.5)
+        self.arm1 = VEXMotorController29(armLeft1, -1.0, 0.5)
 
     def loop(self):
         self.controller.handleEvent()
