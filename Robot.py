@@ -66,14 +66,14 @@ class Robot:
         self.motorLeft2 = VEXMotorController29(motorLeftPort2)
 
     # Set up arms
-        self.armLeft1 = VEXMotorController29(armLeft1, -1.0, 0.5)
-        self.armLeft2 = VEXMotorController29(armLeft2, -1.0, 0.5)
-        self.armLeft3 = VEXMotorController29(armLeft3, -1.0, 0.5)
-        self.armLeft4 = VEXMotorController29(armLeft4, -1.0, 0.5)
-        self.armRight1 = VEXMotorController29(armRight1, -1.0, 0.5)
-        self.armRight2 = VEXMotorController29(armRight2, -1.0, 0.5)
-        self.armRight3 = VEXMotorController29(armRight3, -1.0, 0.5)
-        self.armRight4 = VEXMotorController29(armRight4, -1.0, 0.5)
+        self.armLeft1 = VEXMotorController29(armLeft1, -1.0, 1.0)
+        self.armLeft2 = VEXMotorController29(armLeft2, -1.0, 1.0)
+        self.armLeft3 = VEXMotorController29(armLeft3, -1.0, 1.0)
+        self.armLeft4 = VEXMotorController29(armLeft4, -1.0, 1.0)
+        self.armRight1 = VEXMotorController29(armRight1, -1.0, 1.0)
+        self.armRight2 = VEXMotorController29(armRight2, -1.0, 1.0)
+        self.armRight3 = VEXMotorController29(armRight3, -1.0, 1.0)
+        self.armRight4 = VEXMotorController29(armRight4, -1.0, 1.0)
 
 
     def loop(self):
