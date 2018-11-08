@@ -172,6 +172,17 @@ class Robot:
             self.armRight2.set(1.0)
             self.armRight3.set(-1.0)
             self.armRight4.set(1.0)
+        else:
+            self.armLeft1.set(1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(1.0)
+            self.armLeft4.set(-1.0)
+            
+            self.armRight1.set(-1.0)
+            self.armRight2.set(1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(1.0)
+
     def handleO(self, value):
         # Called when a new 'O' value is recieved
             self.armLeft1.set(1.0)
@@ -183,6 +194,16 @@ class Robot:
             self.armRight2.set(-1.0)
             self.armRight3.set(1.0)
             self.armRight4.set(-1.0)
+        else:
+            self.armLeft1.set(1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(1.0)
+            self.armLeft4.set(-1.0)
+            
+            self.armRight1.set(-1.0)
+            self.armRight2.set(1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(1.0)
 
     def handleT(self, value):
         if (value == 0):
