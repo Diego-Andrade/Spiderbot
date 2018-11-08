@@ -1,14 +1,12 @@
 # Author: Diego Andrade
 # Purpose: Handle event codes, register listeners, and trigger
-#          listners to new events recieved
+#          listners to events
+# Date: 11/7/18
 
-import sys
 from evdev import InputDevice, categorize, ecodes
 
-class XboxOneController:
-
-    # Class to facilitate storing listners for later callback
-    class XboxEventListner:
+class PS4Controller:
+    class PS4EventListner:
         event = None
         listner = None
         callBack = None
@@ -20,24 +18,27 @@ class XboxOneController:
     
     # Controller mapping
     map = {
-        "A":      304,
-        "B":      305,
-        "X":      307,
-        "Y":      308,
-        "LB":     310,
-        "RB":     311,
-        "L3":     317,
-        "R3":     318,
-        "Select": 314,
-        "Start":  315,
-        "LT":    "ABS_Z",
-        "RT":    "ABS_RZ",
-        "LX":    "ABS_X",
-        "LY":    "ABS_Y",
-        "RX":    "ABS_RX",
-        "RY":    "ABS_RY"
+        "X":        304,
+        "O":        305,
+        "S":        308,
+        "T":        307,
+        "L1":       310,
+        "R1":       311,
+        "L2":       312,
+        "R2":       313,
+        "L3":       317,
+        "R3":       318,
+        "Share":    314,
+        "Options":  315,
+        "LX":       "ABS_X",
+        "LY":        "ABS_Y",
+        "RX":       "ABS_RX",
+        "RY":       "ABS_RY",
+        "L2Axis":   "ABS_Z",
+        "R2Axis":   "ABS_RZ"
     }
-        
+
+    
     def __init__(self, deviceLocation, deadzoneAxis=0.0, deadzoneTriggers=0.0):
         try:
             # List of listners, populated once they register
@@ -58,9 +59,10 @@ class XboxOneController:
             print("Check if controller connected correctly")
             self.controllerConnected = False;
             #sys.exit()
+        
     def registerListner(self, event, listner, callBack):
         if event in self.map:
-            newListner = self.XboxEventListner(self.map[event], listner, callBack)
+            newListner = self.PS4EventListner(self.map[event], listner, callBack)
             self.listners.append(newListner)
         else:
             raise Exception('Event requested not supported', event)
@@ -91,24 +93,15 @@ class XboxOneController:
                     if listner.event == ecodes.bytype[absevent.event.type][absevent.event.code]:
                         listner.callBack(self.scaleAxis(listner.event, absevent.event.value))
         except IOError:
-            print("Cannot get event from controller. Was it disconnected?")
-            self.controllerConnected = False;
-    def scaleAxis(self, axis, value):
-        if axis == self.map["LT"] or axis == self.map["RT"]:
-            # Range for LT and RT is 0 - 1023
-            percentageValue = value / 1023.0
-            
-            if (abs(percentageValue) < self.deadzoneTriggers):
-                percentageValue = 0.0
-            
-            return percentageValue
-        else:
-            percentageValue = value / 32768.0
-
-            if (abs(percentageValue) < self.deadzoneAxis):
-                percentageValue = 0.0
+            print("Cannot get event from controller. Was it disconnected?")     
                 
-            return percentageValue
-            
+    def scaleAxis(self, axis, value):
+        percentageValue = (value - 127.5) / 127.5
+
+        if (abs(percentageValue) < self.deadzoneAxis):
+                percentageValue = 0.0
+
+        return percentageValue
+                    
     
     

@@ -1,8 +1,23 @@
+# Author: Diego Andrade
+# Purpose: A dummy class created inorder to allowing running of  code
+#          that depends on the raspberrypi's RPi.GPIO class that is not
+#          availible outside of pi
+
 class GPIO:
-    BOARD = 0
-    BCM = 1
-    OUT = 0
-    IN = 1
+    # Board mode const
+    BOARD = 'BOARD'
+    BCM = 'BCM'
+
+    # Pin mode setup
+    OUT = 'OUT'
+    IN = 'IN'
+
+    # Pin out values
+    HIGH = 'HIGH'
+    LOW = 'LOW'
+
+    # Dict to keep track of pin states
+    portStates = dict()
 
     @classmethod
     def setmode(cls, mode):
@@ -10,30 +25,40 @@ class GPIO:
 
     @classmethod
     def setup(cls, port, mode):
-        if (mode == cls.OUT):
-            print("Setting port {} as OUT".format(port))
-        elif (mode == cls.IN):
-            print("Setting port {} as IN".format(port))
+        if (mode == cls.OUT or mode == cls.IN):
+            print("Setting port {} as {}".format(port, mode))
         else:
             print("Error mode not recognised")
+    
+    @classmethod
+    def output(cls, port, value):
+        if (value != cls.HIGH or value != cls.LOW):
+            print("Cannot set port {} to {}. Invalid value".format(port, value))
+            return
+            
+        print("Port {}: {}".format(port, value))
+        cls.portStates[port] = value
 
     @classmethod
-    def PWM(cls, port, freq):
-        print("PWM on port {} with frequency of {} hz created".format(port, freq))
-        newInst = GPIO()
-        newInst.port = port
-        newInst.freq = freq
-        return newInst
-
-    def start(self, dutycycle):
-        print("Starting pwm on port {} with frequency of {} hz and duty cycle of {}".format(self.port, self.freq, dutycycle))
-        self.dutycycle = dutycycle
-
-    def ChangeDutyCycle(self, dutycycle):
-        print ("Change duty cycle for port {} from {} to {}".format(self.port, self.dutycycle, dutycycle))
-
+    def input(cls, port):
+        return cls.portStates[port]
+    
 
     @classmethod
     def cleanup(cls):
         print("Pins cleaned up") 
-    
+
+    class PWM:    
+        def __init__(self, port, freq):
+            print("PWM(port={}, freq={}) created".format(port, freq))
+            self.port = port
+            self.freq = freq
+
+        def start(self, dutycycle):
+            print("Starting pwm: port {} {}hz {}%".format(self.port, self.freq, dutycycle))
+            self.dutycycle = dutycycle
+
+        def ChangeDutyCycle(self, dutycycle):
+            print ("Port {} duty cycle changed: {} -> {}".format(self.port, self.dutycycle, dutycycle))
+            self.dutycycle = dutycycle
+
