@@ -87,6 +87,8 @@ class Robot:
         # Arm1
         self.controller.registerListner("X", self, self.handleX)
         self.controller.registerListner("T", self, self.handleT)
+        self.controller.registerListner("S", self, self.handleS)
+        self.controller.registerListner("O", self, self.handleO)
         
         self.controller.registerListner("L2Axis", self, self.handleL2Axis)
         self.controller.registerListner("R2Axis", self, self.handleR2Axis) 
@@ -136,7 +138,7 @@ class Robot:
     # these methods to handle the event
 
     def handleX(self, value):
-        # Called when a new 'A' value is recieved
+        # Called when a new 'X' value is recieved
         if (value == 1):
             self.armLeft1.set(-1.0)
             self.armLeft2.set(1.0)
@@ -157,6 +159,30 @@ class Robot:
             self.armRight2.set(1.0)
             self.armRight3.set(-1.0)
             self.armRight4.set(1.0)
+
+    def handleS(self, value):
+        # Called when a new 'S' value is recieved
+        if (value == 1):
+            self.armLeft1.set(-1.0)
+            self.armLeft2.set(1.0)
+            self.armLeft3.set(-1.0)
+            self.armLeft4.set(1.0)
+            
+            self.armRight1.set(-1.0)
+            self.armRight2.set(1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(1.0)
+    def handleO(self, value):
+        # Called when a new 'O' value is recieved
+            self.armLeft1.set(1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(1.0)
+            self.armLeft4.set(-1.0)
+            
+            self.armRight1.set(1.0)
+            self.armRight2.set(-1.0)
+            self.armRight3.set(1.0)
+            self.armRight4.set(-1.0)
 
     def handleT(self, value):
         if (value == 0):
