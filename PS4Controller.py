@@ -37,19 +37,28 @@ class PS4Controller:
         "L2Axis":   "ABS_Z",
         "R2Axis":   "ABS_RZ"
     }
+
     
-    # Gamepad object to read events
-    gamepad = None
-    
-    # List of listners
-    listners = []
-    
-    # Deadzone
-    deadzoneAxis = 0.02
-    deadzoneTriggers = 0.0
-    
-    def __init__(self, deviceLocation):
-        self.gamepad = InputDevice(deviceLocation)
+    def __init__(self, deviceLocation, deadzoneAxis=0.0, deadzoneTriggers=0.0):
+        try:
+            # List of listners, populated once they register
+            self.listners = []
+
+            # For reconnecting later
+            self.deviceLocation = deviceLocation
+
+            # Deadzone defining
+            self.deadzoneAxis = deadzoneAxis
+            self.deadzoneTriggers = deadzoneTriggers
+
+            # The controller
+            self.gamepad = InputDevice(deviceLocation)
+            self.controllerConnected = True
+        except OSError:
+            print("Controller not found at location '{}'".format(deviceLocation))
+            print("Check if controller connected correctly")
+            self.controllerConnected = False;
+            #sys.exit()
         
     def registerListner(self, event, listner, callBack):
         if event in self.map:
@@ -59,20 +68,32 @@ class PS4Controller:
             raise Exception('Event requested not supported', event)
         
     def handleEvent(self):
-        event = self.gamepad.read_one()
-        
-        if event == None:
-            return
-        
-        for listner in self.listners:
-            if event.type == ecodes.EV_KEY:
-                if listner.event == event.code:
-                    listner.callBack(event.value)
-            elif event.type == ecodes.EV_ABS:
-                absevent = categorize(event)
-                if listner.event == ecodes.bytype[absevent.event.type][absevent.event.code]:
-                    listner.callBack(self.scaleAxis(listner.event, absevent.event.value))
-                
+        try:
+            # Handle reconnecting
+            if (not self.controllerConnected):
+                try:
+                    self.gamepad = InputDevice(self.deviceLocation)
+                    self.controllerConnected = True
+                    print("Controller reconnected!")
+                except OSError:
+                    return
+
+            # Get event, throws IOError if controller disconnected
+            event = self.gamepad.read_one()
+
+            if event == None:
+                return
+
+            for listner in self.listners:
+                if event.type == ecodes.EV_KEY:
+                    if listner.event == event.code:
+                        listner.callBack(event.value)
+                elif event.type == ecodes.EV_ABS:
+                    absevent = categorize(event)
+                    if listner.event == ecodes.bytype[absevent.event.type][absevent.event.code]:
+                        listner.callBack(self.scaleAxis(listner.event, absevent.event.value))
+        except IOError:
+            print("Cannot get event from controller. Was it disconnected?")     
                 
     def scaleAxis(self, axis, value):
         percentageValue = (value - 127.5) / 127.5
@@ -81,22 +102,6 @@ class PS4Controller:
                 percentageValue = 0.0
 
         return percentageValue
-        
-##        if axis == self.map["LT"] or axis == self.map["RT"]:
-##            # Range for LT and RT is 0 - 1023
-##            percentageValue = value / 1023.0
-##            
-##            if (abs(percentageValue) < self.deadzoneTriggers):
-##                percentageValue = 0.0
-##            
-##            return percentageValue
-##        else:
-##            percentageValue = value / 32768.0
-##
-##            if (abs(percentageValue) < self.deadzoneAxis):
-##                percentageValue = 0.0
-##                
-##            return percentageValue
-            
+                    
     
     

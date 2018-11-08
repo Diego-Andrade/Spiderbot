@@ -13,7 +13,7 @@ else:
 
 class VEXMotorController29:
     
-    def __init__(self, port, lowerMS, centerMS, upperMS):
+    def __init__(self, port, lowerMS = 1.0, centerMS = 1.5, upperMS = 2.0):
 	self.lowerMS = lowerMS
 	self.centerMS = centerMS
 	self.upperMS = upperMS
