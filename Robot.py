@@ -185,6 +185,7 @@ class Robot:
 
     def handleO(self, value):
         # Called when a new 'O' value is recieved
+        if (value == 1):
             self.armLeft1.set(1.0)
             self.armLeft2.set(-1.0)
             self.armLeft3.set(1.0)
