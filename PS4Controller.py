@@ -45,7 +45,7 @@ class PS4Controller:
     listners = []
     
     # Deadzone
-    deadzoneAxis = 0.0
+    deadzoneAxis = 0.02
     deadzoneTriggers = 0.0
     
     def __init__(self, deviceLocation):
@@ -53,7 +53,7 @@ class PS4Controller:
         
     def registerListner(self, event, listner, callBack):
         if event in self.map:
-            newListner = self.XboxEventListner(self.map[event], listner, callBack)
+            newListner = self.PS4EventListner(self.map[event], listner, callBack)
             self.listners.append(newListner)
         else:
             raise Exception('Event requested not supported', event)

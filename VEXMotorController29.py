@@ -13,9 +13,11 @@ else:
 
 class VEXMotorController29:
     
-    def __init__(self, port, lowerLimit = -1.0, upperLimit = 1.0):
-	self.lowerLimit = lowerLimit
-	self.upperLimit = upperLimit
+    def __init__(self, port, lowerMS, centerMS, upperMS):
+	self.lowerMS = lowerMS
+	self.centerMS = centerMS
+	self.upperMS = upperMS
+	
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(port, GPIO.OUT)
         self.motor = GPIO.PWM(port, 50)
@@ -23,16 +25,12 @@ class VEXMotorController29:
         self.set(0)
         
     def set(self, value):
-        if (value > self.upperLimit):
-	    self.set(self.upperLimit)
-	    return
-	elif (value < self.lowerLimit):
-            self.set(self.lowerLimit)
-            return
-        # motor controller 29 requires 1ms - 2ms signal
-        # 1.5 is off, so from center +- 0.5ms
-        # 0.5 * percentage setting + off pos
-        targetMS = 0.5 * value + 1.5
+        if (value < 0):
+             targetMS = (self.centerMS - self.lowerMS) * value + self.centerMS
+        else:
+             targetMS = (self.upperMS - self.centerMS) * value + self.centerMS               
+             
         pwmOut = targetMS * 5
-        
         self.motor.ChangeDutyCycle(pwmOut)
+
+        #print(targetMS)

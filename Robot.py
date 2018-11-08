@@ -3,7 +3,7 @@
 #          in a tank drive configuration
 
 import RPi.GPIO as GPIO
-from XboxOneController import XboxOneController
+from PS4Controller import PS4Controller
 from VEXMotorController29 import VEXMotorController29
 
 # Wiring mapping
@@ -33,20 +33,20 @@ motorRightPort2 = v7port2
 motorLeftPort1 = v7port3
 motorLeftPort2 = v7port4
 
-armLeft1 = v5port1
-armLeft2 = v5port2
-armLeft3 = v5port3
-armLeft4 = v5port4
-armRight1 = v5port5
-armRight2 = v5port6
-armRight3 = v5port7
-armRight4 = v5port8
+armLeft1 = v5port5
+armLeft2 = v5port6
+armLeft3 = v5port2
+armLeft4 = v5port1
+armRight1 = v5port8
+armRight2 = v5port7
+armRight3 = v5port3
+armRight4 = v5port4
 
 class Robot:
     
     def __init__(self):
     # Set up controller
-        self.controller = XboxOneController('/dev/input/event0')
+        self.controller = PS4Controller('/dev/input/event2')
         
     # Set up listners
         # Drive   
@@ -54,26 +54,27 @@ class Robot:
         self.controller.registerListner("RY", self, self.handleRY)
 
         # Arm1
-        self.controller.registerListner("A", self, self.handleA) 
-        self.controller.registerListner("RT", self, self.handleRT)
-        self.controller.registerListner("LT", self, self.handleLT)
+        self.controller.registerListner("X", self, self.handleX) 
+        self.controller.registerListner("R2Axis", self, self.handleR2Axis)
+        self.controller.registerListner("L2Axis", self, self.handleL2Axis)
 
         
     # Set up drive motors
-        self.motorRight1 = VEXMotorController29(motorRightPort1)
-        self.motorRight2 = VEXMotorController29(motorRightPort2)
-        self.motorLeft1 = VEXMotorController29(motorLeftPort1)
-        self.motorLeft2 = VEXMotorController29(motorLeftPort2)
+        #self.motorRight1 = VEXMotorController29(motorRightPort1, offset = -0.21)
+        #self.motorRight2 = VEXMotorController29(motorRightPort2, offset = -0.18)
+        #self.motorLeft1 = VEXMotorController29(motorLeftPort1, offset = -0.2)
+        #self.motorLeft2 = VEXMotorController29(motorLeftPort2, offset = -0.2)
 
     # Set up arms
-        self.armLeft1 = VEXMotorController29(armLeft1, -1.0, 1.0)
-        self.armLeft2 = VEXMotorController29(armLeft2, -1.0, 1.0)
-        self.armLeft3 = VEXMotorController29(armLeft3, -1.0, 1.0)
-        self.armLeft4 = VEXMotorController29(armLeft4, -1.0, 1.0)
-        self.armRight1 = VEXMotorController29(armRight1, -1.0, 1.0)
-        self.armRight2 = VEXMotorController29(armRight2, -1.0, 1.0)
-        self.armRight3 = VEXMotorController29(armRight3, -1.0, 1.0)
-        self.armRight4 = VEXMotorController29(armRight4, -1.0, 1.0)
+        self.armLeft1 = VEXMotorController29(armLeft1, 0.9, 1.3, 1.45)  
+        self.armLeft2 = VEXMotorController29(armLeft2, 1.3, 1.45, 1.9) 
+        self.armLeft3 = VEXMotorController29(armLeft3, 0.88, 1.3, 1.5) 
+        self.armLeft4 = VEXMotorController29(armLeft4, 1.2, 1.4, 1.79)
+        
+        self.armRight1 = VEXMotorController29(armRight1, 1.15, 1.35, 1.91)
+        self.armRight2 = VEXMotorController29(armRight2, 0.85, 1.2, 1.35)
+        self.armRight3 = VEXMotorController29(armRight3, 1.14, 1.3, 1.78)
+        self.armRight4 = VEXMotorController29(armRight4, 0.87, 1.3, 1.5) 
 
 
     def loop(self):
@@ -83,43 +84,48 @@ class Robot:
     # When event is picked up by controller module, it will call one of
     # these methods to handle the event
 
-    def handleA(self, value):\
+    def handleX(self, value):
         # Called when a new 'A' value is recieved
         if (value == 1):
-            self.armLeft1.set(1)
-            self.armLeft2.set(1)
-            self.armLeft3.set(1)
-            self.armLeft4.set(1)
-            self.armRight1.set(1)
-            self.armRight2.set(1)
-            self.armRight3.set(1)
-            self.armRight4.set(1)
+            self.armLeft1.set(-1.0)
+            self.armLeft2.set(1.0)
+            self.armLeft3.set(-1.0)
+            self.armLeft4.set(1.0)
+            
+            self.armRight1.set(1.0)
+            self.armRight2.set(-1.0)
+            self.armRight3.set(1.0)
+            self.armRight4.set(-1.0)
         else:
-            self.armLeft1.set(-1)
-            self.armLeft2.set(-1)
-            self.armLeft3.set(-1)
-            self.armLeft4.set(-1)
-            self.armRight1.set(-1)
-            self.armRight2.set(-1)
-            self.armRight3.set(-1)
-            self.armRight4.set(-1)   
+            self.armLeft1.set(1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(1.0)
+            self.armLeft4.set(-1.0)
+            
+            self.armRight1.set(-1.0)
+            self.armRight2.set(1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(1.0)   
         
     def handleLY(self, value):
+        pass
         # Called when a new LY value is recieved
-        self.motorLeft1.set(value * -1)
-        self.motorLeft2.set(value * -1)
-     
-    def handleRY(self, value):\
-        # This gets called when right stick is moved on xbox controller
-        self.motorRight1.set(value * -1)
-        self.motorRight2.set(value * -1)
+        #self.motorLeft1.set(value * -1)
+        #self.motorLeft2.set(value * -1)
+        #self.armLeft1.set(value)
         
-    def handleRT(self, value):
+    def handleRY(self, value):
+        pass
+        # This gets called when right stick is moved on xbox controller
+        #self.motorRight1.set(value * -1)
+        #self.motorRight2.set(value * -1)
+        
+    def handleR2Axis(self, value):
         pass
         # Move arm1 up
         #self.arm1.set(value)
 
-    def handleLT(self, value):
+    def handleL2Axis(self, value):
         pass
         # Multiply by -1 because LT moves arm1 down
         #self.arm1.set(value * -1)
