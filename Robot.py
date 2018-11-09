@@ -78,7 +78,7 @@ class Robot:
     
     def __init__(self):
     # Set up controller
-        self.controller = XBOXOneController('/dev/input/event0', deadzoneAxis = 0.18)
+        self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
         #self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
         
     # Set up listners
