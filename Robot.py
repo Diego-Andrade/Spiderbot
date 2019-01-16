@@ -78,8 +78,8 @@ class Robot:
     
     def __init__(self):
     # Set up controller
-        self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
-        #self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
+        #self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
+        self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
         
     # Set up listners
         # Drive   
@@ -87,13 +87,13 @@ class Robot:
         self.controller.registerListner("RY", self, self.handleRY)
 
         # Arm1
-        self.controller.registerListner("A", self, self.handleX)
-        self.controller.registerListner("Y", self, self.handleT)
-        self.controller.registerListner("X", self, self.handleS)
-        self.controller.registerListner("B", self, self.handleO)
+        self.controller.registerListner("X", self, self.handleX)
+        self.controller.registerListner("T", self, self.handleT)
+        self.controller.registerListner("S", self, self.handleS)
+        self.controller.registerListner("O", self, self.handleO)
         
-        self.controller.registerListner("LT", self, self.handleL2Axis)
-        self.controller.registerListner("RT", self, self.handleR2Axis) 
+        self.controller.registerListner("L2", self, self.handleL2Axis)
+        self.controller.registerListner("R2", self, self.handleR2Axis) 
 
         
         
