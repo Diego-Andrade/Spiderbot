@@ -8,6 +8,8 @@ from XboxOneController import XboxOneController
 from PS4Controller import PS4Controller
 from VEXMotorController29 import VEXMotorController29
 
+import ServoArm
+
 # Wiring mapping
 
 # Breakout layout
@@ -78,22 +80,22 @@ class Robot:
     
     def __init__(self):
     # Set up controller
-        #self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
-        self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
+        self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
+        #self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
         
     # Set up listners
         # Drive   
-        self.controller.registerListner("LY", self, self.handleLY)
-        self.controller.registerListner("RY", self, self.handleRY)
+        self.controller.registerListner("LT", self, self.handleLY)
+        self.controller.registerListner("RT", self, self.handleRY)
 
         # Arm1
-        self.controller.registerListner("X", self, self.handleX)
-        self.controller.registerListner("T", self, self.handleT)
-        self.controller.registerListner("S", self, self.handleS)
-        self.controller.registerListner("O", self, self.handleO)
+        self.controller.registerListner("A", self, self.handleX)
+        self.controller.registerListner("Y", self, self.handleT)
+        self.controller.registerListner("X", self, self.handleS)
+        self.controller.registerListner("B", self, self.handleO)
         
-        self.controller.registerListner("L2", self, self.handleL2Axis)
-        self.controller.registerListner("R2", self, self.handleR2Axis) 
+        self.controller.registerListner("LB", self, self.handleL2Axis)
+        self.controller.registerListner("RB", self, self.handleR2Axis) 
 
         
         
@@ -108,17 +110,16 @@ class Robot:
         self.motorLeft1.set(0)
         self.motorLeft2.set(0)
 
-    # Set up arms
-        self.armLeft1 = VEXMotorController29(armLeft1, 0.9, 1.3, 1.45)  
-        self.armLeft2 = VEXMotorController29(armLeft2, 1.3, 1.45, 1.9) 
-        self.armLeft3 = VEXMotorController29(armLeft3, 0.88, 1.3, 1.5) 
-        self.armLeft4 = VEXMotorController29(armLeft4, 1.2, 1.4, 1.79)
+    # Set up arms        
+        self.armLeft1 = ServoArm(armLeft1, 900, 1450)  
+        self.armLeft2 = ServoArm(armLeft2, 1300, 1900) 
+        self.armLeft3 = ServoArm(armLeft3, 880, 1500) 
+        self.armLeft4 = ServoArm(armLeft4, 1200, 1790)
         
-        self.armRight1 = VEXMotorController29(armRight1, 1.15, 1.35, 1.91)
-        self.armRight2 = VEXMotorController29(armRight2, 0.85, 1.2, 1.35)
-        self.armRight3 = VEXMotorController29(armRight3, 1.14, 1.3, 1.78)
-        self.armRight4 = VEXMotorController29(armRight4, 0.87, 1.3, 1.5) 
-
+        self.armRight1 = ServoArm(armRight1, 1150, 1910)
+        self.armRight2 = ServoArm(armRight2, 850, 1350)
+        self.armRight3 = ServoArm(armRight3, 1140, 1780)
+        self.armRight4 = ServoArm(armRight4, 870, 1500) 
 
     def loop(self):
         self.controller.handleEvent()
