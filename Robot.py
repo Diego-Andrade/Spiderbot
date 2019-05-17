@@ -6,9 +6,9 @@ import RPi.GPIO as GPIO
 import time
 from XboxOneController import XboxOneController
 from PS4Controller import PS4Controller
-from VEXMotorController29 import VEXMotorController29
+#from VEXMotorController29 import VEXMotorController29
 
-import ServoArm
+from ServoArm import ServoArm
 
 # Wiring mapping
 
@@ -22,7 +22,7 @@ v7port6 = 16
 v7port7 = 20
 v7port8 = 26
 
-v5port1 = 15 
+v5port1 = 15
 v5port2 = 18
 v5port3 = 23
 v5port4 = 24
@@ -31,24 +31,24 @@ v5port6 = 8
 v5port7 = 7
 v5port8 = 12
 
-motorRightPort1 = v7port2
-motorRightPort2 = v7port1
+motorRightPort1 = 5
+motorRightPort2 = 6
 
-motorLeftPort1 = v7port3
-motorLeftPort2 = v7port4
+motorLeftPort1 = 7
+motorLeftPort2 = 8
 
-armLeft1 = v5port5
-armLeft2 = v5port6
-armLeft3 = v5port2
-armLeft4 = v5port1
-armRight1 = v5port8
-armRight2 = v5port7
-armRight3 = v5port3
-armRight4 = v5port4
+armLeft1 = 2
+armLeft2 = 3
+armLeft3 = 13
+armLeft4 = 12
+armRight1 = 0
+armRight2 = 1
+armRight3 = 15
+armRight4 = 14
 
 class Robot:
 
-    # Map of position to 
+    # Map of position to
     walkPos = {
         armLeft1: 1,
         armLeft2: 1,
@@ -57,7 +57,7 @@ class Robot:
         armRight1: 1,
         armRight2: 1,
         armRight3: 1,
-        armRight4: 1,   
+        armRight4: 1,
     }
 
     walkDir = {
@@ -68,58 +68,58 @@ class Robot:
         armRight1: 1,
         armRight2: 1,
         armRight3: 1,
-        armRight4: 1, 
+        armRight4: 1
     }
-    
+
     currentWalk = 0
     walkTickAmount = 0.008
     walkingLeft = False
     walkingRight = False
 
     walkManual = False;
-    
+
     def __init__(self):
     # Set up controller
         self.controller = XboxOneController('/dev/input/event0', deadzoneAxis = 0.18)
         #self.controller = PS4Controller('/dev/input/event2', deadzoneAxis = 0.18)
-        
+
     # Set up listners
-        # Drive   
-        self.controller.registerListner("LT", self, self.handleLY)
-        self.controller.registerListner("RT", self, self.handleRY)
+        # Drive
+        self.controller.registerListner("LY", self, self.handleLY)
+        self.controller.registerListner("RY", self, self.handleRY)
 
         # Arm1
         self.controller.registerListner("A", self, self.handleX)
         self.controller.registerListner("Y", self, self.handleT)
         self.controller.registerListner("X", self, self.handleS)
         self.controller.registerListner("B", self, self.handleO)
-        
-        self.controller.registerListner("LB", self, self.handleL2Axis)
-        self.controller.registerListner("RB", self, self.handleR2Axis) 
 
-        
-        
+        self.controller.registerListner("LT", self, self.handleL2Axis)
+        self.controller.registerListner("RT", self, self.handleR2Axis)
+
+
+
     # Set up drive motors
-        self.motorRight1 = VEXMotorController29(motorRightPort1, 1.0, 1.43, 2.0)
-        self.motorRight2 = VEXMotorController29(motorRightPort2, 1.0, 1.435, 2.0)
-        self.motorLeft1 = VEXMotorController29(motorLeftPort1, 1.0, 1.43, 2.0)
-        self.motorLeft2 = VEXMotorController29(motorLeftPort2, 1.0, 1.45, 2.0)
+        self.motorRight1 = ServoArm(motorRightPort1, 1000, 2000)
+        self.motorRight2 = ServoArm(motorRightPort2, 1000, 2000)
+        self.motorLeft1 = ServoArm(motorLeftPort1, 1000,2000)
+        self.motorLeft2 = ServoArm(motorLeftPort2, 1000, 2000)
 
         self.motorRight1.set(0)
         self.motorRight2.set(0)
         self.motorLeft1.set(0)
         self.motorLeft2.set(0)
 
-    # Set up arms        
-        self.armLeft1 = ServoArm(armLeft1, 900, 1450)  
-        self.armLeft2 = ServoArm(armLeft2, 1300, 1900) 
-        self.armLeft3 = ServoArm(armLeft3, 880, 1500) 
-        self.armLeft4 = ServoArm(armLeft4, 1200, 1790)
-        
-        self.armRight1 = ServoArm(armRight1, 1150, 1910)
-        self.armRight2 = ServoArm(armRight2, 850, 1350)
-        self.armRight3 = ServoArm(armRight3, 1140, 1780)
-        self.armRight4 = ServoArm(armRight4, 870, 1500) 
+    # Set up arms
+        self.armLeft1 = ServoArm(armLeft1, 1450, 1000) #inverted
+        self.armLeft2 = ServoArm(armLeft2, 1300, 1700)
+        self.armLeft3 = ServoArm(armLeft3, 1300, 1000) #inverted
+        self.armLeft4 = ServoArm(armLeft4, 1300, 1800)
+
+        self.armRight1 = ServoArm(armRight1, 1300, 1800)
+        self.armRight2 = ServoArm(armRight2, 1400, 1000) #inverted
+        self.armRight3 = ServoArm(armRight3, 1300, 1780)
+        self.armRight4 = ServoArm(armRight4, 1400, 1000) #inverted
 
     def loop(self):
         self.controller.handleEvent()
@@ -143,71 +143,51 @@ class Robot:
     def handleX(self, value):
         # Called when a new 'X' value is recieved
         if (value == 1):
-            self.armLeft1.set(-1.0)
-            self.armLeft2.set(1.0)
-            self.armLeft3.set(-1.0)
-            self.armLeft4.set(1.0)
-            
-            self.armRight1.set(1.0)
-            self.armRight2.set(-1.0)
-            self.armRight3.set(1.0)
-            self.armRight4.set(-1.0)
-        else:
             self.armLeft1.set(1.0)
-            self.armLeft2.set(-1.0)
+            self.armLeft2.set(1.0)
             self.armLeft3.set(1.0)
-            self.armLeft4.set(-1.0)
-            
-            self.armRight1.set(-1.0)
+            self.armLeft4.set(1.0)
+
+            self.armRight1.set(1.0)
             self.armRight2.set(1.0)
-            self.armRight3.set(-1.0)
+            self.armRight3.set(1.0)
             self.armRight4.set(1.0)
+        else:
+            self.armLeft1.set(-1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(-1.0)
+            self.armLeft4.set(-1.0)
+
+            self.armRight1.set(-1.0)
+            self.armRight2.set(-1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(-1.0)
 
     def handleS(self, value):
         # Called when a new 'S' value is recieved
         if (value == 1):
-            self.armLeft1.set(-1.0)
-            self.armLeft2.set(1.0)
-            self.armLeft3.set(-1.0)
-            self.armLeft4.set(1.0)
-            
-            self.armRight1.set(-1.0)
-            self.armRight2.set(1.0)
-            self.armRight3.set(-1.0)
-            self.armRight4.set(1.0)
-        else:
             self.armLeft1.set(1.0)
-            self.armLeft2.set(-1.0)
+            self.armLeft2.set(1.0)
             self.armLeft3.set(1.0)
+            self.armLeft4.set(1.0)
+        else:
+            self.armLeft1.set(-1.0)
+            self.armLeft2.set(-1.0)
+            self.armLeft3.set(-1.0)
             self.armLeft4.set(-1.0)
-            
-            self.armRight1.set(-1.0)
-            self.armRight2.set(1.0)
-            self.armRight3.set(-1.0)
-            self.armRight4.set(1.0)
 
     def handleO(self, value):
         # Called when a new 'O' value is recieved
         if (value == 1):
-            self.armLeft1.set(1.0)
-            self.armLeft2.set(-1.0)
-            self.armLeft3.set(1.0)
-            self.armLeft4.set(-1.0)
-            
             self.armRight1.set(1.0)
-            self.armRight2.set(-1.0)
-            self.armRight3.set(1.0)
-            self.armRight4.set(-1.0)
-        else:
-            self.armLeft1.set(1.0)
-            self.armLeft2.set(-1.0)
-            self.armLeft3.set(1.0)
-            self.armLeft4.set(-1.0)
-            
-            self.armRight1.set(-1.0)
             self.armRight2.set(1.0)
-            self.armRight3.set(-1.0)
+            self.armRight3.set(1.0)
             self.armRight4.set(1.0)
+        else:
+            self.armRight1.set(-1.0)
+            self.armRight2.set(-1.0)
+            self.armRight3.set(-1.0)
+            self.armRight4.set(-1.0)
 
     def handleT(self, value):
         if (value == 0):
@@ -226,10 +206,10 @@ class Robot:
             self.armRight1.set(value)
             self.armRight2.set(value)
             self.armRight3.set(value)
-            self.armRight4.set(value)        
-        
+            self.armRight4.set(value)
     def handleLY(self, value):
         # Called when a new LY value is recieved
+        print(value)
         self.motorLeft1.set(value * -1)
         self.motorLeft2.set(value * -1)
         if (value != 0):
