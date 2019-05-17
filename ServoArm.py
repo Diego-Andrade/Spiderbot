@@ -11,11 +11,16 @@ class ServoArm:
         self.servo = ServoArm.kit.servo[servo]
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
-
+        self.port = servo
         #setup servo
         self.servo.set_pulse_width_range(lower_limit, upper_limit)
 
     def set(self, val):
+        if (val > 1):
+            val = 1
+        elif (val < -1):
+            val = -1
+
         # val range is [0, 1]
         self.servo.angle = 180 * (val+1)/2
 

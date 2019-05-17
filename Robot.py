@@ -31,11 +31,11 @@ v5port6 = 8
 v5port7 = 7
 v5port8 = 12
 
-motorRightPort1 = 5
-motorRightPort2 = 6
+motorRightPort1 = 6
+motorRightPort2 = 7
 
-motorLeftPort1 = 7
-motorLeftPort2 = 8
+motorLeftPort1 = 4
+motorLeftPort2 = 5
 
 armLeft1 = 2
 armLeft2 = 3
@@ -51,28 +51,28 @@ class Robot:
     # Map of position to
     walkPos = {
         armLeft1: 1,
-        armLeft2: 1,
+        armLeft2: -1,
         armLeft3: 1,
-        armLeft4: 1,
+        armLeft4: -1,
         armRight1: 1,
-        armRight2: 1,
+        armRight2: -1,
         armRight3: 1,
-        armRight4: 1,
+        armRight4: -1,
     }
 
     walkDir = {
         armLeft1: 1,
-        armLeft2: 1,
+        armLeft2: -1,
         armLeft3: 1,
-        armLeft4: 1,
+        armLeft4: -1,
         armRight1: 1,
-        armRight2: 1,
+        armRight2: -1,
         armRight3: 1,
-        armRight4: 1
+        armRight4: -1
     }
 
     currentWalk = 0
-    walkTickAmount = 0.008
+    walkTickAmount = 0.02
     walkingLeft = False
     walkingRight = False
 
@@ -133,7 +133,7 @@ class Robot:
                 self.walkRight()
 
         #Slow down to resonable speed
-        time.sleep(0.001)
+        time.sleep(0.0001)
 
 
     ########## Call back methods ############
@@ -209,14 +209,13 @@ class Robot:
             self.armRight4.set(value)
     def handleLY(self, value):
         # Called when a new LY value is recieved
-        print(value)
         self.motorLeft1.set(value * -1)
         self.motorLeft2.set(value * -1)
         if (value != 0):
             self.walkingLeft = True;
         else:
             self.walkingLeft = False;
-        
+
     def handleRY(self, value):
         # This gets called when right stick is moved on xbox controller
         self.motorRight1.set(value)
@@ -231,16 +230,16 @@ class Robot:
             # End cases
             if (value <= -1 or value >= 1):
                 self.walkDir[key] *= -1
-                
+
             self.walkPos[key] = value + self.walkTickAmount * self.walkDir[key]
-            
+
 
     def walk(self):
         self.armLeft1.set(self.walkPos[armLeft1])
         self.armLeft2.set(self.walkPos[armLeft2])
         self.armLeft3.set(self.walkPos[armLeft3])
         self.armLeft4.set(self.walkPos[armLeft4])
-            
+
         self.armRight1.set(self.walkPos[armRight1])
         self.armRight2.set(self.walkPos[armRight2])
         self.armRight3.set(self.walkPos[armRight3])
@@ -256,8 +255,8 @@ class Robot:
         self.armRight1.set(self.walkPos[armRight1])
         self.armRight2.set(self.walkPos[armRight2])
         self.armRight3.set(self.walkPos[armRight3])
-        self.armRight4.set(self.walkPos[armRight4]) 
-        
+        self.armRight4.set(self.walkPos[armRight4])
+
 
 # ********************** MAIN LOOP *********************
 
@@ -265,14 +264,14 @@ if __name__ == "__main__":
     try:
         # Disabling gpio warnings
         GPIO.setwarnings(False)
-        
+
         robot = Robot()
 
         # Display gamepad to verify correct controller
         print(robot.controller.gamepad)
-        
+
         while True:
-            robot.loop()    
-            
+            robot.loop()
+
     except KeyboardInterrupt:
         GPIO.cleanup()
